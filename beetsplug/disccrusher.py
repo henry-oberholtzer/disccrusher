@@ -51,23 +51,21 @@ class DiscCrusher(BeetsPlugin):
                 info.disctotal = 1
                 for i, item in enumerate(items):
                     item.disctotal = 1
-                    items.disc = 1
-                    items.track = (i + 1)
+                    item.disc = 1
+                    item.track = (i + 1)
 
     def commands(self) -> list[ui.Subcommand]:
         def func(lib, opts, args):
-            write = ui.should_write()
             for item in lib.albums(args):
                 initial_discs = item.disctotal
                 if initial_discs <= 1:
-                    self._log.info("no discs to crush on {item.album}")
+                    self._log.info(f"no discs to crush on {item.album}")
                     continue
                 else:
                     self.crush_discs(item)
                     item.store()
                     remaining_discs = item.disctotal
-                    if write:
-                        item.try_sync(write=True, move=True)
+                    item.try_sync(write=True, move=True)
                     self._log.info(f"crushed {item.album}'s {initial_discs} discs to {remaining_discs}")
 
         self._command.func = func
