@@ -35,6 +35,7 @@ class DiscCrusher(BeetsPlugin):
     def crush_discs(self, info: AlbumInfo | Album):
         # For each album, set "disctotal" to 1
         if isinstance(info, AlbumInfo):
+            self._log.debug("crushing {info.album}")
             if info.media.upper() in self.to_crush:
                 info.mediums = 1
                 for i, track in enumerate(info.tracks):
@@ -44,6 +45,7 @@ class DiscCrusher(BeetsPlugin):
                     track.medium_total = 1
                 # Set new index
                     track.index = (i + 1)
+                    self._log.debug(f"setting {track.title} to {track.medium_index}-{track.index}/{track.medium_total}")
         elif isinstance(info, Album):
             items = info.items()
             media = set([i.media.upper() for i in items])
@@ -53,6 +55,7 @@ class DiscCrusher(BeetsPlugin):
                     item.disctotal = 1
                     item.disc = 1
                     item.track = (i + 1)
+                    self._log.debug(f"setting {item.title} to {item.disc}-{item.track}/{item.disctotal}")
 
     def commands(self) -> list[ui.Subcommand]:
         def func(lib, opts, args):
