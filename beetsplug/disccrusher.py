@@ -35,7 +35,7 @@ class DiscCrusher(BeetsPlugin):
     def crush_discs(self, info: AlbumInfo | Album):
         # For each album, set "disctotal" to 1
         if isinstance(info, AlbumInfo):
-            self._log.debug("crushing {info.album}")
+            self._log.debug(f"crushing {info.album}")
             if info.media.upper() in self.to_crush:
                 info.mediums = 1
                 for track in info.tracks:
