@@ -38,14 +38,14 @@ class DiscCrusher(BeetsPlugin):
             self._log.debug("crushing {info.album}")
             if info.media.upper() in self.to_crush:
                 info.mediums = 1
-                for i, track in enumerate(info.tracks):
+                for track in info.tracks:
+                # Set new index
+                    track.medium_index = track.index
                 # Set disc to 1
-                    track.medium_index = 1
+                    track.medium = 1
                 # Set disc total to 1
                     track.medium_total = 1
-                # Set new index
-                    track.index = (i + 1)
-                    self._log.debug(f"setting {track.title} to {track.medium_index}-{track.index}/{track.medium_total}")
+                    self._log.debug(f"setting {track.title} to {track.medium}-{track.medium_index}/{track.medium_total}")
         elif isinstance(info, Album):
             items = info.items()
             media = set([i.media.upper() for i in items])
