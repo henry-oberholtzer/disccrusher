@@ -35,8 +35,7 @@ class DiscCrusher(BeetsPlugin):
     def crush_discs(self, info: AlbumInfo | Album):
         # For each album, set "disctotal" to 1
         if isinstance(info, AlbumInfo):
-            self._log.debug(f"crushing {info.album}")
-            if info.media.upper() in self.to_crush:
+            if info.media and info.media.upper() in self.to_crush:
                 info.mediums = 1
                 for track in info.tracks:
                 # Set new index
@@ -45,17 +44,23 @@ class DiscCrusher(BeetsPlugin):
                     track.medium = 1
                 # Set disc total to 1
                     track.medium_total = 1
-                    self._log.debug(f"setting {track.title} to {track.medium}-{track.medium_index}/{track.medium_total}")
+                    self._log.debug(
+                        (f"setting {track.title} to {track.medium}")
+                        (f"-{track.medium_index}/{track.medium_total}"))
         elif isinstance(info, Album):
             items = info.items()
-            media = set([i.media.upper() for i in items])
-            if len(media) == 1 and media in self.to_crush:
-                info.disctotal = 1
-                for i, item in enumerate(items):
-                    item.disctotal = 1
-                    item.disc = 1
-                    item.track = (i + 1)
-                    self._log.debug(f"setting {item.title} to {item.disc}-{item.track}/{item.disctotal}")
+            # Check that all items have a media field
+            if all([i.media for i in items]):
+                media = set([i.media.upper() for i in items])
+                if len(media) == 1 and media in self.to_crush:
+                    info.disctotal = 1
+                    for i, item in enumerate(items):
+                        item.disctotal = 1
+                        item.disc = 1
+                        item.track = (i + 1)
+                        self._log.debug(
+                            (f"setting {item.title} to {item.disc}")
+                            (f"-{item.track}/{item.disctotal}"))
 
     def commands(self) -> list[ui.Subcommand]:
         def func(lib, opts, args):
